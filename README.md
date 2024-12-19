@@ -1,15 +1,15 @@
 # cep2uf
 
-Segue um exemplo de código em Java que identifica a unidade federativa (UF) com base na faixa do CEP:
+Aqui está o código atualizado com todas as faixas de CEP e suas respectivas UFs:
 
 ```java
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CepParaUf {
 
     public static void main(String[] args) {
-        String cep = "12345678"; // Insira o CEP aqui
+        String cep = "01000000"; // Insira o CEP aqui
         String uf = identificarUF(cep);
 
         if (uf != null) {
@@ -24,45 +24,76 @@ public class CepParaUf {
             return null; // Verifica se o CEP é válido
         }
 
-        int cepPrefixo = Integer.parseInt(cep.substring(0, 5));
+        int cepNumerico = Integer.parseInt(cep.replace("-", "").substring(0, 8));
 
-        Map<String, String> faixasUF = new HashMap<>();
-        // Adiciona faixas de CEP para cada UF
-        faixasUF.put("SP", "01000-19999");
-        faixasUF.put("RJ", "20000-28999");
-        faixasUF.put("MG", "30000-39999");
-        faixasUF.put("ES", "29000-29999");
-        faixasUF.put("RS", "90000-99999");
-        faixasUF.put("PR", "80000-87999");
-        faixasUF.put("SC", "88000-89999");
-        faixasUF.put("BA", "40000-48999");
-        faixasUF.put("PE", "50000-56999");
-        faixasUF.put("CE", "60000-63999");
-        faixasUF.put("GO", "72800-76799");
-        // Adicione outras faixas de CEP conforme necessário
+        List<FaixaCep> faixas = carregarFaixas();
 
-        for (Map.Entry<String, String> entry : faixasUF.entrySet()) {
-            String uf = entry.getKey();
-            String[] faixa = entry.getValue().split("-");
-            int inicio = Integer.parseInt(faixa[0].replace("-", ""));
-            int fim = Integer.parseInt(faixa[1].replace("-", ""));
-
-            if (cepPrefixo >= inicio && cepPrefixo <= fim) {
-                return uf;
+        for (FaixaCep faixa : faixas) {
+            if (cepNumerico >= faixa.inicio && cepNumerico <= faixa.fim) {
+                return faixa.uf;
             }
         }
 
         return null; // Retorna null se nenhuma UF corresponder
     }
+
+    public static List<FaixaCep> carregarFaixas() {
+        List<FaixaCep> faixas = new ArrayList<>();
+
+        faixas.add(new FaixaCep("AC", 69900000, 69999999));
+        faixas.add(new FaixaCep("AL", 57000000, 57999999));
+        faixas.add(new FaixaCep("AP", 68900000, 68999999));
+        faixas.add(new FaixaCep("AM", 69000000, 69299999));
+        faixas.add(new FaixaCep("AM", 69400000, 69899999));
+        faixas.add(new FaixaCep("BA", 40000000, 48999999));
+        faixas.add(new FaixaCep("CE", 60000000, 63999999));
+        faixas.add(new FaixaCep("DF", 70000000, 72799999));
+        faixas.add(new FaixaCep("DF", 73000000, 73699999));
+        faixas.add(new FaixaCep("ES", 29000000, 29999999));
+        faixas.add(new FaixaCep("GO", 72800000, 72999999));
+        faixas.add(new FaixaCep("GO", 73700000, 76799999));
+        faixas.add(new FaixaCep("MA", 65000000, 65999999));
+        faixas.add(new FaixaCep("MT", 78000000, 78899999));
+        faixas.add(new FaixaCep("MS", 79000000, 79999999));
+        faixas.add(new FaixaCep("MG", 30000000, 39999999));
+        faixas.add(new FaixaCep("PA", 66000000, 68899999));
+        faixas.add(new FaixaCep("PB", 58000000, 58999999));
+        faixas.add(new FaixaCep("PR", 80000000, 87999999));
+        faixas.add(new FaixaCep("PE", 50000000, 56999999));
+        faixas.add(new FaixaCep("PI", 64000000, 64999999));
+        faixas.add(new FaixaCep("RJ", 20000000, 28999999));
+        faixas.add(new FaixaCep("RN", 59000000, 59999999));
+        faixas.add(new FaixaCep("RS", 90000000, 99999999));
+        faixas.add(new FaixaCep("RO", 76800000, 76999999));
+        faixas.add(new FaixaCep("RR", 69300000, 69399999));
+        faixas.add(new FaixaCep("SC", 88000000, 89999999));
+        faixas.add(new FaixaCep("SE", 49000000, 49999999));
+        faixas.add(new FaixaCep("SP", 1000000, 19999999));
+        faixas.add(new FaixaCep("TO", 77000000, 77999999));
+
+        return faixas;
+    }
+
+    static class FaixaCep {
+        String uf;
+        int inicio;
+        int fim;
+
+        FaixaCep(String uf, int inicio, int fim) {
+            this.uf = uf;
+            this.inicio = inicio;
+            this.fim = fim;
+        }
+    }
 }
 ```
 
 ### Explicação:
-1. **Estrutura de Faixas de CEP**: O código utiliza um `Map` para associar as faixas de CEP a suas respectivas UFs.
-2. **Validação do CEP**: O método `identificarUF` verifica se o CEP é válido (com ao menos 8 caracteres).
-3. **Busca pela UF**: O prefixo do CEP é comparado às faixas armazenadas no mapa.
-4. **Adaptação**: Se necessário, você pode adicionar outras faixas de CEP ao mapa.
+1. **Classe `FaixaCep`**: Uma classe auxiliar para representar as faixas de CEP com UF, início e fim.
+2. **Carregamento de Faixas**: O método `carregarFaixas` retorna uma lista de faixas com todas as UFs e intervalos de CEP fornecidos.
+3. **Busca na Lista**: O método `identificarUF` percorre a lista de faixas e verifica se o CEP fornecido pertence a algum intervalo.
+4. **CEP Numérico**: O CEP é tratado como número inteiro para facilitar comparações.
 
 ### Como executar:
-- Insira um CEP no formato de string (sem caracteres especiais, como `-`).
-- Compile e execute o código para verificar a UF correspondente.
+1. Insira um CEP na variável `cep` no formato de 8 dígitos.
+2. Compile e execute o código. Ele retornará a UF correspondente ou informará se o CEP está fora das faixas conhecidas.
